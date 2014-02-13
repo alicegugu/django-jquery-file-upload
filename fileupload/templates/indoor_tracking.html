@@ -42,6 +42,22 @@
 <div align="center">
 <canvas id="canvas" style="background-image:url('/media/{{layout}}');background-repeat: no-repeat;"></canvas>
 </div>
+
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{{ STATIC_URL }}js/vendor/jquery.ui.widget.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{{ STATIC_URL }}js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
+<!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
+
+
 <script type="text/javascript">
 
 var Positions = [];
@@ -103,19 +119,6 @@ $("#canvas").mousedown(function (e) {
 
 
 </script>
-
-
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-<script src="{{ STATIC_URL }}js/vendor/jquery.ui.widget.js"></script>
-<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-<script src="{{ STATIC_URL }}js/jquery.iframe-transport.js"></script>
-<!-- The basic File Upload plugin -->
-<script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
-<!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 
 </body> 
 </html>
