@@ -6,6 +6,7 @@ from fileupload.views import (
         PictureCreateView, PictureDeleteView, PictureListView,
         )
 
+
 urlpatterns = patterns('',
     url(r'^basic/$', BasicVersionCreateView.as_view(), name='upload-basic'),
     url(r'^basic/plus/$', BasicPlusVersionCreateView.as_view(), name='upload-basic-plus'),
