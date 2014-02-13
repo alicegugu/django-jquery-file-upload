@@ -13,8 +13,11 @@ from django.views.generic import View
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormView
 from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from django.core.context_processors import csrf
 
-
+        
 class LoginView(FormView):
     """
     This is a class based version of django.contrib.auth.views.login.
@@ -84,9 +87,24 @@ class LoginView(FormView):
         self.set_test_cookie()
         return super(LoginView, self).get(request, *args, **kwargs)
 
+    def post(self, *args, **kwargs):
+        username = self.request.POST.get('username', '')
+        password = self.request.POST.get('password', '')
+        user = auth.authenticate(username=username, password=password)
+    
+        if user is not None:
+            auth.login(self.request, user)
+            return HttpResponseRedirect('/loggedin')
+        else:
+            args = {}
+            args['invalid'] = True
+            args['STATIC_URL'] = 'static/'
+            args.update(csrf(self.request))
+            return render_to_response('index.html', args) # our template can detect this variable
+
 
 class LogoutView(TemplateResponseMixin, View):
-    template_name = "registration/logout.html"
+    template_name = "logout.html"
     redirect_field_name = "next"
 
     def get(self, *args, **kwargs):

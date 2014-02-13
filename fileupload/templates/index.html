@@ -37,15 +37,19 @@
     <div class="container">
 
         <div id="login-wraper">
-            <form class="form login-form">
+            <form action="/" method="post" class="form login-form">
+                {% csrf_token %}
                 <legend>Sign in </legend>
             
                 <div class="body">
                     <label>Username</label>
-                    <input type="text">
+                    <input name="username" type="text">
                     
                     <label>Password</label>
-                    <input type="password">
+                    <input name="password" type="password">
+                    {% if invalid %}
+                        <label class="flash flash-error"> Incorrect username or password</label>
+                    {% endif %}
                 </div>
             
                 <div class="footer">

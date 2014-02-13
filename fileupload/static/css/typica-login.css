@@ -382,3 +382,13 @@ footer.navbar-fixed-bottom {
     margin: 0 auto;
   }
 }
+
+.flash.flash-error, .flash-global.flash-error {
+color: #911;
+background-color: #efd0d0;
+background-image: -moz-linear-gradient(#f8d8d8, #efd0d0);
+background-image: -webkit-linear-gradient(#f8d8d8, #efd0d0);
+background-image: linear-gradient(#f8d8d8, #efd0d0);
+border-color: #da9797;
+position: absolute;
+}

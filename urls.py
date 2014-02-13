@@ -4,12 +4,12 @@ from django.http import HttpResponseRedirect
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
-from class_based_auth_views.views import LoginView
+from class_based_auth_views.views import *
 
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'upload.views.home', name='home'),
-    url(r'^$', LoginView.as_view(),name='login'),
+    url(r'^$', LoginView.as_view(success_url='/loggedin/'),name='login'),
     #url(r'^$', lambda x: HttpResponseRedirect('/upload/new/')),
     url(r'^upload/', include('fileupload.urls')),
 
