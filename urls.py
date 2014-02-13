@@ -10,9 +10,9 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'upload.views.home', name='home'),
     url(r'^$', LoginView.as_view(success_url='/loggedin/'),name='login'),
+    url(r'^indoor_tracking/', IndoorTrackingView.as_view()),
     #url(r'^$', lambda x: HttpResponseRedirect('/upload/new/')),
     url(r'^upload/', include('fileupload.urls')),
-
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

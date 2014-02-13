@@ -16,8 +16,20 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
+from fileupload.models import Picture
 
-        
+from django.views.generic.base import View
+
+class IndoorTrackingView(View):
+    def get(self, request):
+        user = request.user
+        pic = Picture.objects.order_by('-pk')[0]
+        args = {}
+        args['layout'] =  pic.file
+        args['username'] = request.user.username
+        args['STATIC_URL'] = '/static/'
+        return render_to_response("indoor_tracking.html", args)
+
 class LoginView(FormView):
     """
     This is a class based version of django.contrib.auth.views.login.
