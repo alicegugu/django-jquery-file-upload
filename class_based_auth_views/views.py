@@ -94,7 +94,7 @@ class LoginView(FormView):
     
         if user is not None:
             auth.login(self.request, user)
-            return HttpResponseRedirect('/loggedin')
+            return HttpResponseRedirect('/upload/basic/')
         else:
             args = {}
             args['invalid'] = True
@@ -104,7 +104,7 @@ class LoginView(FormView):
 
 
 class LogoutView(TemplateResponseMixin, View):
-    template_name = "logout.html"
+    template_name = "index.html"
     redirect_field_name = "next"
 
     def get(self, *args, **kwargs):

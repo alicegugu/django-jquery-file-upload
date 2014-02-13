@@ -6,6 +6,7 @@ from django.views.generic import CreateView, DeleteView, ListView
 from .models import Picture
 from .response import JSONResponse, response_mimetype
 from .serialize import serialize
+from django.shortcuts import render_to_response
 
 
 class PictureCreateView(CreateView):
@@ -25,6 +26,12 @@ class PictureCreateView(CreateView):
 
 class BasicVersionCreateView(PictureCreateView):
     template_name_suffix = '_basic_form'
+
+    def get(self, *args, **kwargs):
+        args = {}
+        args['username'] = self.request.user
+        args['STATIC_URL'] = '/static/'
+        return render_to_response('fileupload/picture_basic_form.html', args) # our template can detect this variable
 
 
 class BasicPlusVersionCreateView(PictureCreateView):
