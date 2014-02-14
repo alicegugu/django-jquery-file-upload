@@ -32,6 +32,14 @@ class IndoorTrackingView(View):
             args['layout'] =  pic[0].file
         return render_to_response("indoor_tracking.html", args)
 
+class OutdoorTrackingView(View):
+    def get(self, request):
+        user = request.user
+        args = {}
+        args['username'] = request.user.username
+        args['STATIC_URL'] = '/static/'
+        return render_to_response("outdoor_tracking.html", args)
+
 class RegisterView(View):
     """docstring for RegisterView"""
     def get(self, request):
