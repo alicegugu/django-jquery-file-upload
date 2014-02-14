@@ -17,19 +17,44 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from fileupload.models import Picture
+from django.contrib.auth.forms import UserCreationForm
 
 from django.views.generic.base import View
 
 class IndoorTrackingView(View):
     def get(self, request):
         user = request.user
-        pic = Picture.objects.order_by('-pk')[0]
+        pic = Picture.objects.order_by('-pk')
         args = {}
-        args['layout'] =  pic.file
         args['username'] = request.user.username
         args['STATIC_URL'] = '/static/'
+        if pic is not None:
+            args['layout'] =  pic[0].file
         return render_to_response("indoor_tracking.html", args)
 
+class RegisterView(View):
+    """docstring for RegisterView"""
+    def get(self, request):
+        args = {}
+        args.update(csrf(request))
+        args['STATIC_URL'] = '/static/'
+        args['form'] = UserCreationForm()
+        return render_to_response("register.html", args)
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = self.request.POST.get('username', '')
+            password = self.request.POST.get('password1', '')
+            user = auth.authenticate(username=username, password=password)
+    
+            if user is not None:
+                auth.login(self.request, user)
+                return HttpResponseRedirect('/upload/basic/')
+            else:
+                return HttpResponse('register failed')
+        
 class LoginView(FormView):
     """
     This is a class based version of django.contrib.auth.views.login.
