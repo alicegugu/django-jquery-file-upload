@@ -1,0 +1,55 @@
+{% extends "header.html" %}
+{% block content %}
+
+
+
+
+
+<div align = "center">
+<h2 >Profile</h2>
+<form id="profile_form" method="POST" action="/accounts/profile/" enctype="multipart/form-data">
+	{% csrf_token %}
+	<table>
+		<tbody>
+			<tr>
+				<td>Name:</td>
+				<td>{{full_name}}</td>
+			</tr>
+			<tr>
+				<td>Tag ID</td>
+				<td>{{form.tag_id}}</td>
+			</tr>
+			<tr>
+				<td>Contact number</td>
+				<td>{{form.contact_number}}</td>
+			</tr>
+			<tr>
+				<td>Layout</td>
+				<td>{{form.layout}}</td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" id="update" value="Update" />
+</form>
+<DIV id="saved"></DIV>
+</div>
+
+<script type="text/javascript">
+    var frm = $("#profile_form");
+    console.log("type="+$("#profile_form").attr('method'));
+    frm.submit(function () {
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                $("#saved").html(data);
+            },
+            error: function(data) {
+                $("#saved").html("Something went wrong!");
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}

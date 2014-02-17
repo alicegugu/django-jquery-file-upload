@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<!-- Force latest IE rendering engine or ChromeFrame if installed -->
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+<meta charset="utf-8">
+<title>Django jQuery File Upload Demo - Basic version</title>
+<meta name="description" content="File Upload widget with multiple file selection, drag&amp;drop support and progress bar for jQuery. Supports cross-domain, chunked and resumable file uploads. Works with any server-side platform (PHP, Python, Ruby on Rails, Java, Node.js, Go etc.) that supports standard HTML form file uploads.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Bootstrap styles -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<!-- Generic page styles -->
+<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css">
+</head>
+<body>
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-fixed-top .navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Elderly tracking system</a>
+        </div>
+        <div class="navbar-collapse collapse  navbar-right">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/upload/basic">Upload layout</a></li>
+                <li><a href="/indoor_tracking">Indoor Tracking</a></li>
+                <li><a href="/outdoor_tracking">Outdoor Tracking</a></li>
+                <li><a href="/alert">Alert</a></li>
+
+                <li class="active"><a href="/accounts/profile">{{username}}</a></li>
+                <li ><a href="/accounts/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+<div align = "center">
+	<div class="col-sm-4">
+        <div class="panel panel-default">
+           	<div class="panel-heading">
+              	<h3 class="panel-title">Profile</h3>
+            </div>
+            <div class="panel-body">
+              
+
+			<form id="profile_form" method="POST" action="/accounts/profile/" enctype="multipart/form-data" class="form">
+				{% csrf_token %}
+			        		    
+			        <div class="body">
+			        	<table>
+							<tbody>
+								<tr>
+									<td><label>Name:</label></td>
+			        				<td>{% load addcss %} {{username}}</td>
+			        			</tr>
+								<tr>
+									<td><label>Tag ID:</label></td>
+			        				<td>{% load addcss %} {{form.tag_id|addcss:"input-huge"}}</td>
+			        			</tr>
+			        			<tr>
+			        				<td><label>Contact number:</label></td>
+			        				<td>{% load addcss %} {{form.contact_number|addcss:"input-huge"}}</td>
+			        			</tr>
+							</tbody>
+						</table> 
+			        </div>
+
+					<!--
+						<table>
+							<tbody>
+								<tr>
+									<td>Name:</td>
+									<td>{{username}}</td>
+								</tr>
+								<tr>
+									<td>Tag ID</td>
+									<td>{{form.tag_id}}</td>
+								</tr>
+								<tr>
+									<td>Contact number</td>
+									<td>{{form.contact_number}}</td>
+								</tr>
+							</tbody>
+						</table> 
+						<input type="submit" id="update" value="Update" />-->
+						<div class="footer">
+						<button id="update" value="Update" type="submit" class="btn btn-success">Update</button>
+						</div>
+					</form>
+
+			<DIV id="saved"></DIV>
+            </div>
+          </div>
+        </div>
+
+
+
+</div>
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{{ STATIC_URL }}js/vendor/jquery.ui.widget.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{{ STATIC_URL }}js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="{{ STATIC_URL }}js/jquery.fileupload.js"></script>
+
+<script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
+
+
+    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+
+
+
+<script type="text/javascript">
+    var frm = $("#profile_form");
+    console.log("type="+$("#profile_form").attr('method'));
+    frm.submit(function () {
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                $("#saved").html(data);
+            },
+            error: function(data) {
+                $("#saved").html("Something went wrong!");
+            }
+        });
+        return false;
+    });
+</script>
+
+
+</body> 
+</html>
