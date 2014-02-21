@@ -24,7 +24,7 @@ from django.views.generic.base import View
 class IndoorTrackingView(View):
     def get(self, request):
         user = request.user
-        pic = Picture.objects.order_by('-pk')
+        pic = Picture.objects.filter(user=user).order_by('-pk')
         args = {}
         args['username'] = request.user.username
         args['STATIC_URL'] = '/static/'

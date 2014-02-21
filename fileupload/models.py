@@ -1,6 +1,10 @@
 # encoding: utf-8
 from django.db import models
+from django.contrib.auth.models import User
+import os
 
+def get_image_path(instance, filename):
+    return os.path.join('pictures', str(instance.user), filename)
 
 class Picture(models.Model):
     """This is a small demo using just two fields. The slug field is really not
@@ -9,8 +13,9 @@ class Picture(models.Model):
     problems installing pillow, use a more generic FileField instead.
 
     """
-    file = models.ImageField(upload_to="pictures")
+    file = models.ImageField(upload_to=get_image_path)
     slug = models.SlugField(max_length=50, blank=True)
+    user = models.ForeignKey(User)
 
     def __unicode__(self):
         return self.file.name

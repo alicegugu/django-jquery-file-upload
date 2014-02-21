@@ -15,6 +15,7 @@ class PictureCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         files = [serialize(self.object)]
+        form.instance.user = self.request.user
         data = {'files': files}
         response = JSONResponse(data, mimetype=response_mimetype(self.request))
         response['Content-Disposition'] = 'inline; filename=files.json'
@@ -23,6 +24,24 @@ class PictureCreateView(CreateView):
     def form_invalid(self, form):
         data = json.dumps(form.errors)
         return HttpResponse(content=data, status=400, content_type='application/json')
+
+
+    def post(self, *args, **kwargs):
+        if self.request.FILES == None:
+            raise Http404("No objects uploaded")
+        f = self.request.FILES['file']
+
+        a = Picture()
+        a.user = self.request.user
+        a.file.save(f.name, f)
+        a.save()
+
+        files = [serialize(a)]
+        data = {'files': files}
+
+        response = JSONResponse(data, mimetype=response_mimetype(self.request))
+        response['Content-Disposition'] = 'inline; filename=files.json'
+        return response
 
 class BasicVersionCreateView(PictureCreateView):
     template_name_suffix = '_basic_form'
