@@ -16,10 +16,55 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
-from fileupload.models import Picture
+from fileupload.models import Picture, WifiPosition
 from django.contrib.auth.forms import UserCreationForm
 
 from django.views.generic.base import View
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.core import serializers
+
+'''------------------------RESTful apis-----------------------------
+'''
+
+class WifiPositionView(View):
+    """Set and Delete wifi position"""
+    def post(self, request):
+        position = request.raw_post_data
+
+        pos=json.loads(position)
+        print pos
+
+        p = WifiPosition()
+        p.x = pos['x']
+        p.y = pos['y']
+        p.user = request.user
+        p.save()
+
+        return HttpResponse('{saved wifi position}')
+
+    def delete(self, request):
+        user = request.user
+        WifiPosition.objects.filter(user=user).delete()
+        return HttpResponse('{delete wifi position}')
+
+    def get(self, request):
+        poss = WifiPosition.objects.filter(user=request.user).order_by('-pk')
+
+        data = serializers.serialize('json', poss)
+
+        return HttpResponse(data , content_type="application/json")
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(WifiPositionView, self).dispatch(*args, **kwargs)
+
+
+
+'''--------------------------------------------------------------------
+'''
+
+
 
 class IndoorTrackingView(View):
     def get(self, request):

@@ -32,3 +32,10 @@ class Picture(models.Model):
         """delete -- Remove to leave file."""
         self.file.delete(False)
         super(Picture, self).delete(*args, **kwargs)
+
+class WifiPosition(models.Model):
+    """docstring for WifiPosition"""
+    x = models.IntegerField()
+    y = models.IntegerField()
+    user =  models.ForeignKey(User)
+        
