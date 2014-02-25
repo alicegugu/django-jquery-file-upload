@@ -23,6 +23,8 @@ from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core import serializers
+from django.core.cache import cache
+from userprofile.models import UserProfile
 
 '''------------------------RESTful apis-----------------------------
 '''
@@ -59,6 +61,73 @@ class WifiPositionView(View):
     def dispatch(self, *args, **kwargs):
         return super(WifiPositionView, self).dispatch(*args, **kwargs)
 
+
+class GPSPositionView(View):
+    """Set and Get GPS Position"""
+    def post(self, request):
+        response_data = {}
+
+        try:
+            key = request.POST.get('key')
+            cache_key = request.POST.get('tag_id')
+            position_latitude = request.POST.get('position_latitude')
+            position_longitude = request.POST.get('position_longitude')
+
+            if key == "set_gps_position_key_2014":
+                
+
+                if cache_key is None:
+                    raise Exception('tag id can not be none')
+
+                if position_latitude is None:
+                    raise Exception('latitude can not be none')
+
+                if position_longitude is None:
+                    raise Exception('longitude can not be none')
+
+                # position will be updated for 30 sec
+                cache_time = 30
+                cache.set(cache_key+'latitude', position_latitude, cache_time)
+                cache.set(cache_key+'longitude', position_longitude, cache_time)
+                response_data['latitude'] = position_latitude
+                response_data['longitude'] = position_longitude
+
+            else:
+                raise Exception('key can not be empty')
+
+        except Exception, e:
+            response_data['errors'] = []
+            response_data['errors'].append(str(e))
+        else:
+            pass
+        finally:
+            pass
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+    def get(self, request):
+        user = request.user
+        # get tag id from User table
+        profile = UserProfile.objects.filter(user=user)[0]
+        cache_key = profile.tag_id
+
+        position_latitude = cache.get(cache_key+'latitude')
+        position_longitude =  cache.get(cache_key+'longitude')
+
+        response_data = {}
+        response_data['gps_position_latitude'] = position_latitude
+        response_data['gps_position_longitude'] = position_longitude
+
+        if position_latitude is None or position_longitude is None:
+            response_data['status'] = 'lost'
+
+        if cache_key is None:
+            response_data['error'] = 'User has no tag attached'
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(GPSPositionView, self).dispatch(*args, **kwargs)
 
 
 '''--------------------------------------------------------------------

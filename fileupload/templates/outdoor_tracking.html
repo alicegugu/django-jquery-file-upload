@@ -88,13 +88,15 @@
       google.maps.event.addDomListener(window, 'load', initialize);
 
       var marker = null;
-            //Ajax call to get position
+      
+
+      //Ajax call to get position
       function set_center() {
             var feedback = $.ajax({
                 type: 'GET',
-                url: 'get_gps_position',
+                url: '/gpsposition/',
               success: function (data) {
-                console.log(data);
+                  console.log(data);
                   if (data['gps_position_longitude'] != null && data['gps_position_latitude'] != null ) {
                     console.log(data['gps_position_latitude']);
                     console.log(data['gps_position_longitude'] );
