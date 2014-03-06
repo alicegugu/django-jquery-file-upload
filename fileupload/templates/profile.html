@@ -13,6 +13,8 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
 <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
 <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css">
+
+<link href="{{ STATIC_URL }}css/bootstrap-switch.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="navbar navbar-default navbar-fixed-top">
@@ -68,6 +70,14 @@
 			        				<td><label>Contact number:</label></td>
 			        				<td>{% load addcss %} {{form.contact_number|addcss:"input-huge"}}</td>
 			        			</tr>
+			        			<tr>
+			        				<td><label>Switch</label></td>
+			        				<td><input type="checkbox" name="my-checkbox" checked data-on-color="success" data-off-color="success" data-size="small"></td>
+			        			</tr>
+			        			<tr>
+			        				<td><tr></tr></td>
+			        				<td><tr></tr></td>
+			        			</tr>
 							</tbody>
 						</table> 
 			        </div>
@@ -119,11 +129,10 @@
 
     <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
 
-
+<script src="{{ STATIC_URL }}js/bootstrap-switch.min.js"></script>
 
 <script type="text/javascript">
     var frm = $("#profile_form");
-    console.log("type="+$("#profile_form").attr('method'));
     frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
@@ -138,6 +147,9 @@
         });
         return false;
     });
+
+
+$("[name='my-checkbox']").bootstrapSwitch();
 </script>
 
 

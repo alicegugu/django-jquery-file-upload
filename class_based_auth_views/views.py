@@ -130,6 +130,61 @@ class GPSPositionView(View):
         return super(GPSPositionView, self).dispatch(*args, **kwargs)
 
 
+class IndoorPositionView(View):
+    """indoor position"""
+
+
+    def get(self, request):
+        user = request.user
+        user_profile = UserProfile.objects.filter(user=user)[0]
+        tag_id = user_profile.tag_id
+        wifi_pos_index = cache.get(tag_id+'wifi_position')
+
+        if wifi_pos_index is not None:
+
+            wifi_position = WifiPosition.objects.filter(user =user).order_by('pk')[int(wifi_pos_index)]
+
+            data = {}
+            data['x'] = wifi_position.x
+            data['y'] = wifi_position.y
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
+        else:
+            response_data = {}
+            response_data['status'] = 'lost'
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    def post(self, request):
+
+        response_data = {}
+        try:
+            key = request.POST.get('key')
+            if key == "set_indoor_position_key_2014":
+                cache_key = request.POST.get('tag_id')
+
+                if cache_key is None:
+                    raise Exception('user has no tag attached')
+                else:
+                    wifi_position = request.POST.get('wifi_position')
+                    cache_time = 30
+                    cache.set(cache_key+'wifi_position', wifi_position, cache_time)
+
+            else:
+                raise Exception('wrong key')
+        except Exception, e:
+            response_data['errors'] = []
+            response_data['errors'].append(str(e))
+        else:
+            pass
+        finally:
+            pass
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+          
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(IndoorPositionView, self).dispatch(*args, **kwargs)     
 '''--------------------------------------------------------------------
 '''
 
@@ -176,6 +231,8 @@ class RegisterView(View):
                 return HttpResponseRedirect('/upload/basic/')
             else:
                 return HttpResponse('register failed')
+        else:
+            return HttpResponse('form is not valid')
         
 class LoginView(FormView):
     """

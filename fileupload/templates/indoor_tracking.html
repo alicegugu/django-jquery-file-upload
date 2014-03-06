@@ -80,6 +80,15 @@ function draw(x, y) {
     ctx.stroke();
 }
 
+function drawTag(x, y) {
+    ctx.beginPath();
+    ctx.fillStyle="#FF0000";
+    ctx.strokeStyle = "gray";
+    ctx.arc(x,y,15,0,Math.PI*2,true);
+    ctx.fill();
+    ctx.stroke();
+}
+
 function position(mouseX, mouseY)
 {
     this.x=mouseX;
@@ -157,6 +166,19 @@ $(delete_wifi).mousedown(function(e) {
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 });
+
+
+function showTag() {
+    var feedback = $.ajax({
+        type: 'GET',
+        url: '/indoorposition/',
+        success: function (data) {
+            console.log(data);
+            drawTag(data['x'], data['y'])
+        }
+    })
+}
+setInterval(showTag, 10000);
 
 </script>
 
