@@ -72,7 +72,7 @@
 			        			</tr>
 			        			<tr>
 			        				<td><label>Switch</label></td>
-			        				<td><input type="checkbox" name="my-checkbox" checked data-on-color="success" data-off-color="success" data-size="small"></td>
+			        				<td>{% load addcss %} {{form.on_or_off|addcss:"input-huge"}}</td>
 			        			</tr>
 			        			<tr>
 			        				<td><tr></tr></td>
