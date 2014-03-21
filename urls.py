@@ -9,7 +9,7 @@ from class_based_auth_views.views import *
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'upload.views.home', name='home'),
-    url(r'^$', LoginView.as_view(success_url='/loggedin/'),name='login'),
+    url(r'^$', LoginView.as_view(),name='login'),
     url(r'^indoor_tracking/', IndoorTrackingView.as_view()),
     url(r'^outdoor_tracking/', OutdoorTrackingView.as_view()),
     url(r'^wifiposition/',  WifiPositionView.as_view()),

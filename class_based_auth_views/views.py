@@ -68,10 +68,14 @@ class GPSPositionView(View):
         response_data = {}
 
         try:
-            key = request.POST.get('key')
-            cache_key = request.POST.get('tag_id')
-            position_latitude = request.POST.get('position_latitude')
-            position_longitude = request.POST.get('position_longitude')
+
+            request_data = request.raw_post_data
+            pos = json.loads(request_data)
+
+            key = pos['key']
+            cache_key = pos['tag_id']
+            position_latitude = pos['position_latitude']
+            position_longitude = pos['position_longitude']
 
             if key == "set_gps_position_key_2014":
                 
