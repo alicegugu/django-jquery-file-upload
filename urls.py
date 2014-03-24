@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^indoorposition/', IndoorPositionView.as_view()),
     url(r'^gpsposition/', GPSPositionView.as_view()),
     url(r'^register/', RegisterView.as_view()),
+    url(r'^contact_number/(?P<contact_id>\d{8})', ContactNumber.as_view(), name="12345678"),
     #url(r'^$', lambda x: HttpResponseRedirect('/upload/new/')),
     url(r'^upload/', include('fileupload.urls')),
     # Uncomment the admin/doc line below to enable admin documentation:
