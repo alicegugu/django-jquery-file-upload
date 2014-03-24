@@ -359,5 +359,5 @@ class LogoutView(TemplateResponseMixin, View):
 		
 class On_or_Off(View):
   def get (self, request, tag_id):
-    return HttpResponse('Hello World')
+    return HttpResponse('Hello %s' %tag_id)
    
