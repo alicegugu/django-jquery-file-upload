@@ -359,4 +359,4 @@ class LogoutView(TemplateResponseMixin, View):
 		
 class ContactNumber(View):
     def get(self,request,contact_id=12345678):
-        return HttpResponse('{hello world}',)
+        return HttpResponse('{hello world %s}' %contact_id)
