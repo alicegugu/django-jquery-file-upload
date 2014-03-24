@@ -73,6 +73,7 @@ class GPSPositionView(View):
             pos = json.loads(request_data)
 
             key = pos['key']
+            #key = request.META['HTTP_X_APIKEY']
             cache_key = pos['tag_id']
             position_latitude = pos['position_latitude']
             position_longitude = pos['position_longitude']
