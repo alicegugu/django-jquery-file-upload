@@ -355,3 +355,8 @@ class LogoutView(TemplateResponseMixin, View):
             fallback_url = settings.LOGIN_URL
         kwargs.setdefault("redirect_field_name", self.get_redirect_field_name())
         return default_redirect(self.request, fallback_url, **kwargs)
+		
+class On_or_Off(View):
+  def get (self, request, tag_id):
+    return HttpResponse('Hello World')
+   
