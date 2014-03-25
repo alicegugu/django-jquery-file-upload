@@ -73,7 +73,7 @@ class GPSPositionView(View):
             pos = json.loads(request_data)
 
             key = pos['key']
-            #key = request.META['HTTP_X_APIKEY']
+            key = request.META['HTTP_X_APIKEY']
             cache_key = pos['tag_id']
             position_latitude = pos['position_latitude']
             position_longitude = pos['position_longitude']
@@ -358,5 +358,29 @@ class LogoutView(TemplateResponseMixin, View):
         return default_redirect(self.request, fallback_url, **kwargs)
 		
 class ContactNumber(View):
-    def get(self,request,contact_id=12345678):
-        return HttpResponse('{hello world %s}' %contact_id)
+    def get(self,request,tag_id):
+		response_data = {}
+		
+		key = request.META['HTTP_X_APIKEY']
+
+		if key == "contact_number_2014":
+		
+		
+			if tag_id is not None:
+				query = UserProfile.objects.filter(tag_id = tag_id)
+			if len(query) == 0:
+				response_data['errors'] = []
+				response_data['errors'].append("Can not find contact number for this device")
+			if len(query) == 1:
+				response_data['contact_number'] = query[0].contact_number
+			if len(query) > 1:
+				response_data['errors'] = []
+				response_data['errors'].append("more than one contact number were found")
+			
+		else:
+			response_data['errors'] = []
+			response_data['errors'].append("error: enter the key")
+
+
+			
+		return HttpResponse(json.dumps(response_data), content_type="application/json")
