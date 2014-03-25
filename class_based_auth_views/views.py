@@ -358,6 +358,42 @@ class LogoutView(TemplateResponseMixin, View):
         return default_redirect(self.request, fallback_url, **kwargs)
 		
 class On_or_Off(View):
-  def get (self, request, tag_id):
-    return HttpResponse('Hello %s' %tag_id)
+    def get (self, request, tag_id):
+		response_data = {}
+	
+		try:
+			#tag_id = request.get('tag_id') #no need this line as it has alrdy gotten the tag_id 	
+			#pos = json.dumps(tag_id)	
+			#key = pos['key']
+			
+			key = request.META['HTTP_X_APIKEY']
+			
+			if key == "1234567890":
+				if tag_id is not None:
+					query = UserProfile.objects.filter(tag_id = tag_id)		#search the database
+					if len(query) == 0:										#if there is no set of models for the userprofile
+						response_data['errors'] = []						#before append data we will need a blank 
+						response_data['errors'].append("Can not find on/off for this device")
+					if len(query) == 1:
+						on_off = query[0].on_or_off							#get the first set of data and call the on_or_off and store it to a variable 
+						response_data['on_off'] = on_off					#show the data
+					if len(query) > 1:
+						response_data['errors'] = []
+						response_data['errors'].append("more than one on/off were found")
+			#else:	
+			#	response_data['errors'].append("There's no tag id")
+			#	query.tag_id
+			else:
+				response_data['errors'] = []
+				response_data['errors'].append("key cannot be empty")
+				
+		except Exception, e:
+			response_data['errors'] = []
+			response_data['errors'].append(e)
+		else:
+			pass
+		finally:
+			pass
+	
+		return HttpResponse(json.dumps(response_data), content_type="application/json")
    
