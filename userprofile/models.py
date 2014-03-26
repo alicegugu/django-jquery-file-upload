@@ -11,4 +11,11 @@ class UserProfile(models.Model):
 	# The device is on when this value is true
 	on_or_off = models.BooleanField(default=True)
 
-User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])		
+User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+
+
+class OutdoorPosition(models.Model):
+	latitude = models.FloatField(default=0)   #float
+	longitude = models.FloatField(default=0)
+	timestamp = models.DateTimeField(auto_now_add=True)
+	tag_id = models.CharField(max_length=8)		

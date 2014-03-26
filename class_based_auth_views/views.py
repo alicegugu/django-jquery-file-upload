@@ -25,6 +25,7 @@ import json
 from django.core import serializers
 from django.core.cache import cache
 from userprofile.models import UserProfile
+from userprofile.models import OutdoorPosition
 
 '''------------------------RESTful apis-----------------------------
 '''
@@ -75,8 +76,10 @@ class GPSPositionView(View):
             key = pos['key']
             key = request.META['HTTP_X_APIKEY']
             cache_key = pos['tag_id']
+
             position_latitude = pos['position_latitude']
             position_longitude = pos['position_longitude']
+			
 
             if key == "set_gps_position_key_2014":
                 
@@ -96,6 +99,13 @@ class GPSPositionView(View):
                 cache.set(cache_key+'longitude', position_longitude, cache_time)
                 response_data['latitude'] = position_latitude
                 response_data['longitude'] = position_longitude
+				
+                s = OutdoorPosition()
+                s.latitude = position_latitude	
+                s.longitude = position_longitude
+                #print position_longitude
+                s.tag_id= cache_key
+                s.save()
 
             else:
                 raise Exception('key can not be empty')
@@ -107,6 +117,7 @@ class GPSPositionView(View):
             pass
         finally:
             pass
+
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
         
@@ -360,23 +371,26 @@ class LogoutView(TemplateResponseMixin, View):
 class ContactNumber(View):
     def get(self,request,tag_id):
 		response_data = {}
-		
+		#security-like feature, X-Apikey in postman 
 		key = request.META['HTTP_X_APIKEY']
-
+		
+		#"key" is similar to a password
 		if key == "contact_number_2014":
 		
 		
 			if tag_id is not None:
+				#data from the "forms" stored
 				query = UserProfile.objects.filter(tag_id = tag_id)
 			if len(query) == 0:
 				response_data['errors'] = []
 				response_data['errors'].append("Can not find contact number for this device")
 			if len(query) == 1:
+				#display "contact_number" as from "tag_id"
 				response_data['contact_number'] = query[0].contact_number
 			if len(query) > 1:
 				response_data['errors'] = []
 				response_data['errors'].append("more than one contact number were found")
-			
+		#if the key is wrong, display error message	
 		else:
 			response_data['errors'] = []
 			response_data['errors'].append("error: enter the key")
