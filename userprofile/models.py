@@ -12,3 +12,8 @@ class UserProfile(models.Model):
 	on_or_off = models.BooleanField(default=True)
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])		
+
+class IndoorPosition(models.Model):
+	indoorposition = models.IntegerField()
+	tag_id = models.CharField(max_length=8)
+	timestamp = models.DateTimeField(auto_now_add=True)

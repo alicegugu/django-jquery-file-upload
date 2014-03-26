@@ -24,7 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core import serializers
 from django.core.cache import cache
-from userprofile.models import UserProfile
+from userprofile.models import UserProfile , IndoorPosition
 
 '''------------------------RESTful apis-----------------------------
 '''
@@ -161,30 +161,35 @@ class IndoorPositionView(View):
 
     def post(self, request):
 
-        response_data = {}
-        try:
-            key = request.POST.get('key')
-            if key == "set_indoor_position_key_2014":
-                cache_key = request.POST.get('tag_id')
+		response_data = {}
+		p = IndoorPosition()
+		
+		try:
+			key = request.POST.get('key')
+			if key == "set_indoor_position_key_2014":
+				cache_key = request.POST.get('tag_id')
+				p.tag_id = cache_key
+					
+				if cache_key is None:
+					raise Exception('user has no tag attached')
+				else:
+					wifi_position = request.POST.get('wifi_position')
+					p.indoorposition = wifi_position
+					cache_time = 30
+					cache.set(cache_key+'wifi_position', wifi_position, cache_time)		
+					p.save()					
+					
+			else:
+				raise Exception('wrong key')
+		except Exception, e:
+			response_data['errors'] = []
+			response_data['errors'].append(str(e))
+		else:
+			pass
+		finally:
+			pass
 
-                if cache_key is None:
-                    raise Exception('user has no tag attached')
-                else:
-                    wifi_position = request.POST.get('wifi_position')
-                    cache_time = 30
-                    cache.set(cache_key+'wifi_position', wifi_position, cache_time)
-
-            else:
-                raise Exception('wrong key')
-        except Exception, e:
-            response_data['errors'] = []
-            response_data['errors'].append(str(e))
-        else:
-            pass
-        finally:
-            pass
-
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+		return HttpResponse(json.dumps(response_data), content_type="application/json")
           
 
     @method_decorator(csrf_exempt)
