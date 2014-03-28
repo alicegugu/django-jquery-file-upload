@@ -143,11 +143,14 @@ class IndoorPositionView(View):
         user = request.user
         user_profile = UserProfile.objects.filter(user=user)[0]
         tag_id = user_profile.tag_id
-        wifi_pos_index = cache.get(tag_id+'wifi_position')
+        #wifi_pos_index = cache.get(tag_id+'wifi_position')
+        idpo = IndoorPosition.objects.all()												#get all the objects in IndoorPosition
+        list = idpo.filter(tag_id = tag_id).order_by('-timestamp').filter(id=1)[0]		#filter it by the tag_id and sort it by the timestamp and get the first id and the first arrary
+        wifi_pos_index = list.indoorposition											#call the indoorpositon object
 
         if wifi_pos_index is not None:
 
-            wifi_position = WifiPosition.objects.filter(user =user).order_by('pk')[int(wifi_pos_index)]
+            wifi_position = WifiPosition.objects.filter(user=user).order_by('pk')[int(wifi_pos_index)]
 
             data = {}
             data['x'] = wifi_position.x
@@ -162,8 +165,8 @@ class IndoorPositionView(View):
     def post(self, request):
 
 		response_data = {}
-		p = IndoorPosition()
-		
+		p = IndoorPosition()										#as cache_key/wifi_position are unicode object, it cannot be save so it need equate it to IndoorPosition to be saved 
+
 		try:
 			key = request.POST.get('key')
 			if key == "set_indoor_position_key_2014":
@@ -175,9 +178,9 @@ class IndoorPositionView(View):
 				else:
 					wifi_position = request.POST.get('wifi_position')
 					p.indoorposition = wifi_position
+					p.save()
 					cache_time = 30
-					cache.set(cache_key+'wifi_position', wifi_position, cache_time)		
-					p.save()					
+					cache.set(cache_key+'wifi_position', wifi_position, cache_time)							
 					
 			else:
 				raise Exception('wrong key')
