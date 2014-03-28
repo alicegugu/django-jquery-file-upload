@@ -145,7 +145,7 @@ class IndoorPositionView(View):
         tag_id = user_profile.tag_id
         #wifi_pos_index = cache.get(tag_id+'wifi_position')
         idpo = IndoorPosition.objects.all()												#get all the objects in IndoorPosition
-        list = idpo.filter(tag_id = tag_id).order_by('-timestamp').filter(id=1)[0]		#filter it by the tag_id and sort it by the timestamp and get the first id and the first arrary
+        list = idpo.filter(tag_id = tag_id).order_by('-timestamp')[0]					#filter it by the tag_id and sort it by the timestamp and get the first arrary
         wifi_pos_index = list.indoorposition											#call the indoorpositon object
 
         if wifi_pos_index is not None:
