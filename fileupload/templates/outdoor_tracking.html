@@ -31,6 +31,7 @@
                 <li><a href="/indoor_tracking">Indoor Tracking</a></li>
                 <li class="active"><a href="/outdoor_tracking">Outdoor Tracking</a></li>
                 <li><a href="/alert">Alert</a></li>
+				<!-- <li><a href="/gpsposition">Track 24 hours</a></li> -->
                 <li style ="float: right"><a href="/logout">Logout</a></li>
                 <li style ="float: right"><a href="/accounts/profile">{{username}}</a></li>
             </ul>
@@ -39,12 +40,11 @@
 </div>
 
 
-
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <style type="text/css">
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
-      #map-canvas { height: 100% }
+      #map-canvas { height: 75% }
     </style>
 
 
@@ -60,8 +60,15 @@
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 
-
+<input type="button" style="background-color: blue;" onclick="window.location = 'http://www.yahoo.com/'" value="track 24 hours" />
+<button type="button" onclick="http://127.0.0.1:8000/gpsposition/">Click Me!</button>
+<p>&nbsp; </p>
+<div align ="center">
+&nbsp;
+<button type="button" onclick="window.location='http://127.0.0.1:8000/gpsposition/'">track 24 hour</button>
+</div>
 <div id="map-canvas"/>
+
 
  <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJw7FvMZUvLWz7n_arn92StvDhr8ytEMc&sensor=false">
@@ -135,6 +142,8 @@
    
 
     </script>
+
+
 
 </body> 
 </html>
