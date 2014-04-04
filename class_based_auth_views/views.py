@@ -130,36 +130,55 @@ class GPSPositionView(View):
         profile = UserProfile.objects.filter(user=user)[0]
         cache_key = profile.tag_id
 		#UNCOMMENT to see all the data in db
-        #outp = OutdoorPosition.objects.all()
+        outp = OutdoorPosition.objects.all()
+		
+		#timestamp
+        from datetime import datetime, timedelta
+        current_time = datetime.now()
+        timewant = current_time - timedelta(days=1)
+
+		
 		
 		#UNCOMMENT to see all data from db, GOOGLE for more info on 'serializers' DATA is here
-        #from django.core import serializers
-        #data = serializers.serialize("json", OutdoorPosition.objects.all())
+        from django.core import serializers
+        data = serializers.serialize("json", OutdoorPosition.objects.all().filter(timestamp__range=(timewant,current_time)).order_by('-timestamp'))
 		
-        record = OutdoorPosition.objects.filter(id=6)[0]
+		#//
+        #record = OutdoorPosition.objects.filter(id=6)[0]
         #outp2 = outp.filter(tag_id=cache_key).order_by('-timestamp')     -----xWRONG
 		#.get(id=5)     -----xWRONG
-        position_latitude = record.latitude
-        position_longitude=record.longitude
+		#//
+        #position_latitude = record.latitude
+        #position_longitude=record.longitude
+		#//
+        #position_latitude= data.latitude
+        #position_longitude= data.longitude
+        #time_stamp= data.timestamp
+	
         #position_latitude = OutdoorPosition.objects.get(latitude)  -----xWRONG
         #position_longitude =  OutdoorPosition.objects.get(longitude)   -----xWRONG
 
-        #print position_latitude
-        response_data = {}
+        #print position_latitude-------------------------------------
+        #response_data = {}
 		#Nest 2 lines to see individual data according to 'id' needed from 'record'
-        response_data['gps_position_latitude'] = position_latitude
-        response_data['gps_position_longitude'] = position_longitude
+        #response_data['gps_position_latitude'] = position_latitude
+        #response_data['gps_position_longitude'] = position_longitude
+		#// IMPORTANT
+        #data_response={}
+        #data_response['gps_position_latitude']= position_latitude
+        #data_response['gps_position_longitude']= position_longitude
+        #data_response['past24']= time_stamp
 
         #response_data['all'] = outp
 		#UNCOMMENT NEXT 2 LINES to see all data from db 
-        if position_latitude is None or position_longitude is None:
-            response_data['status'] = 'lost'
+        #if position_latitude is None or position_longitude is None:
+        #    response_data['status'] = 'lost'
 
-        if cache_key is None:
-            response_data['error'] = 'User has no tag attached'
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        #if cache_key is None:
+        #    response_data['error'] = 'User has no tag attached'
+        #return HttpResponse(json.dumps(response_data), content_type="application/json")
 		#UNCOMMENT to see 'data'
-        #return HttpResponse(data, content_type="application/json")
+        return HttpResponse(data, content_type="application/json")
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):

@@ -61,11 +61,11 @@
 <script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 
 <input type="button" style="background-color: blue;" onclick="window.location = 'http://www.yahoo.com/'" value="track 24 hours" />
-<button type="button" onclick="http://127.0.0.1:8000/gpsposition/">Click Me!</button>
+
 <p>&nbsp; </p>
 <div align ="center">
 &nbsp;
-<button type="button" onclick="window.location='http://127.0.0.1:8000/gpsposition/'">track 24 hour</button>
+<button type="button" class="btn btn-success" id="track24" >track 24 hour</button>
 </div>
 <div id="map-canvas"/>
 
@@ -76,10 +76,15 @@
     <script type="text/javascript">
       var map;
       var marker;
+      var amk=new google.maps.LatLng(1.3702, 103.8456);
+	  var bb=new google.maps.LatLng(1.32643, 103.79426);
+	  var myTrip=[];
+	  
       function initialize() {
         var mapOptions = {
           center: new google.maps.LatLng(1.32643, 103.79426),
           zoom: 11
+
         };
       map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
@@ -139,6 +144,40 @@
         });
       }
       setInterval(set_center, 10000);
+	  
+	  function searching(){
+
+		var flightPath=new google.maps.Polyline({		
+		path:myTrip,
+		strokeColor:"#0000FF",
+		strokeOpacity:0.8,
+		strokeWeight:2
+		});
+		flightPath.setMap(map);
+		
+	  }
+	  
+
+	  function call_last(){
+	  $.ajax({
+      url: '/gpsposition/',
+      type: 'GET',
+      success: function(data) {
+                console.log(data);
+				for (var i=0;i<data.length;i++)
+                { 
+					myTrip.push(new google.maps.LatLng(data[i].fields.latitude,data[i].fields.longitude));
+
+				}
+				searching();
+
+            }
+
+      })
+}	  
+	  obj=document.getElementById("track24");
+	  obj.onclick=call_last;
+
    
 
     </script>
