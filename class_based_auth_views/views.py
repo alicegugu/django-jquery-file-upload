@@ -146,17 +146,13 @@ class IndoorPositionView(View):
     def get(self, request):
         user = request.user
         user_profile = UserProfile.objects.filter(user=user)[0]
-        tag_id = user_profile.tag_id
-        #wifi_pos_index = cache.get(tag_id+'wifi_position')
-        idpo = IndoorPosition.objects.all()												#get all the objects in IndoorPosition
-        list = idpo.filter(tag_id = tag_id).order_by('-timestamp')[0]					#filter it by the tag_id and sort it by the timestamp and get the first arrary
-        wifi_pos_index = list.indoorposition											#call the indoorpositon object
+        tag_id = user_profile.tag_id	
+        idpo = IndoorPosition.objects.all()															#get all the objects in IndoorPosition
+        #list = idpo.filter(tag_id = tag_id).order_by('-timestamp')[0]								#filter it by the tag_id and sort it by the timestamp and get the first arrary
+        #wifi_pos_index = list.indoorposition														#call the indoorpositon object
        	   
         now = datetime.datetime.now()
         newtime = now - timedelta(hours=24)
-        #data = serializers.serialize('json' ,idpo.filter(timestamp__range=(newtime,now)).order_by('-timestamp'))	#display all data 
-		
-        #return HttpResponse(data , content_type="application/json")
 		
         get24 = idpo.filter(timestamp__range=(newtime,now)).order_by('timestamp')					#filter the time to get the time within alst 24 hours
         list24 = get24.values_list()																#make a queryset to a list 
@@ -172,21 +168,18 @@ class IndoorPositionView(View):
             list48 = []																				
             for i in wifi_positions:																#i is the dictionary 
                 indoor = i['indoorposition']														#to get the indoorposition number from the list 
-                #print indoor
                 wifi = WifiPosition.objects.filter(user=user).order_by('pk')[int(indoor)]
                 data = {}   
                 data['x'] = wifi.x
                 data['y'] = wifi.y
-                #print data
                 list48.append(data)
-				
-            #print list48  
+		
             return HttpResponse(json.dumps(list48), content_type="application/json")
            
 		
-        if wifi_pos_index is not None:
+        #if wifi_pos_index is not None:
             
-            wifi_position = WifiPosition.objects.filter(user=user).order_by('pk')[int(wifi_pos_index)]
+            #wifi_position = WifiPosition.objects.filter(user=user).order_by('pk')[int(wifi_pos_index)]
         #    print wifi_position
 
         #    data = {}
