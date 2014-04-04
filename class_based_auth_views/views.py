@@ -158,7 +158,7 @@ class IndoorPositionView(View):
 		
         #return HttpResponse(data , content_type="application/json")
 		
-        get24 = idpo.filter(timestamp__range=(newtime,now)).order_by('-timestamp')					#filter the time to get the time within alst 24 hours
+        get24 = idpo.filter(timestamp__range=(newtime,now)).order_by('timestamp')					#filter the time to get the time within alst 24 hours
         list24 = get24.values_list()																#make a queryset to a list 
         wifi_positions = []				 															#make a list to add many dictionary data in 
         for idp in list24:

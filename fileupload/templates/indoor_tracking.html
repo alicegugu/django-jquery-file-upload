@@ -200,7 +200,7 @@ $(track).mousedown(function(e) {
 					//mark(data[i].x , data[i].y);
                 }
 				
-				mark(data[i].x, data[i].y)
+			    mark(data[data.length-1].x , data[data.length-1].y);
 				
 				ctx.beginPath()
 				ctx.moveTo(data[0].x,data[0].y);
