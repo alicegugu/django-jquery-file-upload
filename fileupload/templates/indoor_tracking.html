@@ -47,6 +47,14 @@
     <button id="delete_wifi" class="btn btn-success">Delete all wifi</button>
 </div>
 
+<br>
+
+<div align = "center">
+
+	<button id = "track" class="btn btn-success">Track last 24 Hour</button>
+
+</div>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <script src="{{ STATIC_URL }}js/vendor/jquery.ui.widget.js"></script>
@@ -62,6 +70,7 @@
 <script type="text/javascript">
 
 var Positions = [];
+var myline = [];
 
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
@@ -83,6 +92,15 @@ function draw(x, y) {
 function drawTag(x, y) {
     ctx.beginPath();
     ctx.fillStyle="#FF0000";
+    ctx.strokeStyle = "gray";
+    ctx.arc(x,y,15,0,Math.PI*2,true);
+    ctx.fill();
+    ctx.stroke();
+}
+
+function mark(x,y){
+	ctx.beginPath();
+    ctx.fillStyle="yellow";
     ctx.strokeStyle = "gray";
     ctx.arc(x,y,15,0,Math.PI*2,true);
     ctx.fill();
@@ -145,7 +163,7 @@ $( window ).load(function() {
       type: 'GET',
       success: function(data) {
                 console.log(data);
-                
+				
                 for (var i=0;i<data.length;i++)
                 { 
                     draw(data[i].fields.x, data[i].fields.y);
@@ -160,14 +178,40 @@ $(delete_wifi).mousedown(function(e) {
       url: '/wifiposition/',
       type: 'DELETE',
       success: function(data) {
-                console.log(data);
+                console.log(data)
             }
     });
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 });
 
-
+$(track).mousedown(function(e) {
+    // Call ajax to load wifi position for the last 24 hours 
+    $.ajax({
+	  url: '/indoorposition/',
+	  type: 'GET', 
+	  success: function(data){
+	             console.log(data);				 //show data on the console log 
+				 
+				 for (var i=0;i<data.length-1;i++)
+                { 
+                    drawTag(data[i].x, data[i].y);
+                }
+				
+			    mark(data[data.length-1].x , data[data.length-1].y);
+				
+				ctx.beginPath()
+				ctx.moveTo(data[0].x,data[0].y);
+				
+				for (i=1;i<data.length;i++)
+				{
+					ctx.lineTo(data[i].x, data[i].y);
+				}
+				ctx.stroke();
+	        }
+	});
+	
+});
 function showTag() {
     var feedback = $.ajax({
         type: 'GET',

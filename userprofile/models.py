@@ -18,4 +18,9 @@ class OutdoorPosition(models.Model):
 	latitude = models.FloatField(default=0)   #float
 	longitude = models.FloatField(default=0)
 	timestamp = models.DateTimeField(auto_now_add=True)
-	tag_id = models.CharField(max_length=8)		
+	tag_id = models.CharField(max_length=8)			
+
+class IndoorPosition(models.Model):
+	indoorposition = models.IntegerField()
+	tag_id = models.CharField(max_length=8)
+	timestamp = models.DateTimeField(auto_now_add=True)

@@ -24,9 +24,13 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core import serializers
 from django.core.cache import cache
-from userprofile.models import UserProfile
 #call "OutdoorPosition" from models.py 
 from userprofile.models import OutdoorPosition
+from userprofile.models import UserProfile , IndoorPosition
+
+from datetime import datetime, timedelta
+import datetime
+
 
 '''------------------------RESTful apis-----------------------------
 '''
@@ -192,17 +196,46 @@ class IndoorPositionView(View):
     def get(self, request):
         user = request.user
         user_profile = UserProfile.objects.filter(user=user)[0]
-        tag_id = user_profile.tag_id
-        wifi_pos_index = cache.get(tag_id+'wifi_position')
+        tag_id = user_profile.tag_id	
+        idpo = IndoorPosition.objects.all()															#get all the objects in IndoorPosition
+        #list = idpo.filter(tag_id = tag_id).order_by('-timestamp')[0]								#filter it by the tag_id and sort it by the timestamp and get the first arrary
+        #wifi_pos_index = list.indoorposition														#call the indoorpositon object
+       	   
+        now = datetime.datetime.now()
+        newtime = now - timedelta(hours=24)
+		
+        get24 = idpo.filter(timestamp__range=(newtime,now)).order_by('timestamp')					#filter the time to get the time within alst 24 hours
+        list24 = get24.values_list()																#make a queryset to a list 
+        wifi_positions = []				 															#make a list to add many dictionary data in 
+        for idp in list24:
+            wifi_post = {}
+            wifi_post['indoorposition'] = idp[1]													#get the indoorposition from the list 
+            wifi_positions.append(wifi_post)														#and add it to the list 
+        
+        if wifi_positions is not None:
 
-        if wifi_pos_index is not None:
+            
+            list48 = []																				
+            for i in wifi_positions:																#i is the dictionary 
+                indoor = i['indoorposition']														#to get the indoorposition number from the list 
+                wifi = WifiPosition.objects.filter(user=user).order_by('pk')[int(indoor)]
+                data = {}   
+                data['x'] = wifi.x
+                data['y'] = wifi.y
+                list48.append(data)
+		
+            return HttpResponse(json.dumps(list48), content_type="application/json")
+           
+		
+        #if wifi_pos_index is not None:
+            
+            #wifi_position = WifiPosition.objects.filter(user=user).order_by('pk')[int(wifi_pos_index)]
+        #    print wifi_position
 
-            wifi_position = WifiPosition.objects.filter(user =user).order_by('pk')[int(wifi_pos_index)]
-
-            data = {}
-            data['x'] = wifi_position.x
-            data['y'] = wifi_position.y
-            return HttpResponse(json.dumps(data), content_type="application/json")
+        #    data = {}
+        #    data['x'] = wifi_position.x
+        #    data['y'] = wifi_position.y
+        #   return HttpResponse(json.dumps(data), content_type="application/json")
 
         else:
             response_data = {}
@@ -211,30 +244,35 @@ class IndoorPositionView(View):
 
     def post(self, request):
 
-        response_data = {}
-        try:
-            key = request.POST.get('key')
-            if key == "set_indoor_position_key_2014":
-                cache_key = request.POST.get('tag_id')
+		response_data = {}
+		p = IndoorPosition()										#as cache_key/wifi_position are unicode object, it cannot be save so it need equate it to IndoorPosition to be saved 
 
-                if cache_key is None:
-                    raise Exception('user has no tag attached')
-                else:
-                    wifi_position = request.POST.get('wifi_position')
-                    cache_time = 30
-                    cache.set(cache_key+'wifi_position', wifi_position, cache_time)
+		try:
+			key = request.POST.get('key')
+			if key == "set_indoor_position_key_2014":
+				cache_key = request.POST.get('tag_id')
+				p.tag_id = cache_key
+					
+				if cache_key is None:
+					raise Exception('user has no tag attached')
+				else:
+					wifi_position = request.POST.get('wifi_position')
+					p.indoorposition = wifi_position
+					p.save()
+					cache_time = 30
+					cache.set(cache_key+'wifi_position', wifi_position, cache_time)							
+					
+			else:
+				raise Exception('wrong key')
+		except Exception, e:
+			response_data['errors'] = []
+			response_data['errors'].append(str(e))
+		else:
+			pass
+		finally:
+			pass
 
-            else:
-                raise Exception('wrong key')
-        except Exception, e:
-            response_data['errors'] = []
-            response_data['errors'].append(str(e))
-        else:
-            pass
-        finally:
-            pass
-
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+		return HttpResponse(json.dumps(response_data), content_type="application/json")
           
 
     @method_decorator(csrf_exempt)
@@ -407,6 +445,7 @@ class LogoutView(TemplateResponseMixin, View):
         kwargs.setdefault("redirect_field_name", self.get_redirect_field_name())
         return default_redirect(self.request, fallback_url, **kwargs)
 		
+
 class ContactNumber(View):
     def get(self,request,tag_id):
 		response_data = {}
@@ -437,3 +476,44 @@ class ContactNumber(View):
 
 			
 		return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+class On_or_Off(View):
+    def get (self, request, tag_id):
+		response_data = {}
+	
+		try:
+			#tag_id = request.get('tag_id') #no need this line as it has alrdy gotten the tag_id 	
+			#pos = json.dumps(tag_id)	
+			#key = pos['key']
+			
+			key = request.META['HTTP_X_APIKEY']
+			
+			if key == "1234567890":
+				if tag_id is not None:
+					query = UserProfile.objects.filter(tag_id = tag_id)		#search the database
+					if len(query) == 0:										#if there is no set of models for the userprofile
+						response_data['errors'] = []						#before append data we will need a blank 
+						response_data['errors'].append("Can not find on/off for this device")
+					if len(query) == 1:
+						on_off = query[0].on_or_off							#get the first set of data and call the on_or_off and store it to a variable 
+						response_data['on_off'] = on_off					#show the data
+					if len(query) > 1:
+						response_data['errors'] = []
+						response_data['errors'].append("more than one on/off were found")
+			#else:	
+			#	response_data['errors'].append("There's no tag id")
+			#	query.tag_id
+			else:
+				response_data['errors'] = []
+				response_data['errors'].append("key cannot be empty")
+				
+		except Exception, e:
+			response_data['errors'] = []
+			response_data['errors'].append(e)
+		else:
+			pass
+		finally:
+			pass
+	
+		return HttpResponse(json.dumps(response_data), content_type="application/json")
+   
