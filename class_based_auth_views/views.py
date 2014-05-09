@@ -78,7 +78,7 @@ class GPSPositionView(View):
             request_data = request.raw_post_data
             pos = json.loads(request_data)
 
-            key = pos['key']
+            #key = pos['key']
             key = request.META['HTTP_X_APIKEY']
             cache_key = pos['tag_id']
 
