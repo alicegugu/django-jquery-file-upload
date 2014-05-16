@@ -78,7 +78,7 @@
       var marker;
       var amk=new google.maps.LatLng(1.3702, 103.8456);
 	  var bb=new google.maps.LatLng(1.32643, 103.79426);
-	  var myTrip=[];
+
 	  
       function initialize() {
         var mapOptions = {
@@ -145,33 +145,28 @@
       }
       setInterval(set_center, 10000);
 	  
-	  function searching(){
 
-		var flightPath=new google.maps.Polyline({		
-		path:myTrip,
-		strokeColor:"#0000FF",
-		strokeOpacity:0.8,
-		strokeWeight:2
-		});
-		flightPath.setMap(map);
-		
-	  }
-	  
 
 	  function call_last(){
 	  $.ajax({
       url: '/gpsposition/',
       type: 'GET',
       success: function(data) {
-                console.log(data);
-				for (var i=0;i<data.length;i++)
-                { 
-					myTrip.push(new google.maps.LatLng(data[i].fields.latitude,data[i].fields.longitude));
+          var myTrip=[];
+  				for (var i=0;i<data.length;i++)
+          { 
 
-				}
-				searching();
+  				  myTrip.push(new google.maps.LatLng(data[i].fields.latitude,data[i].fields.longitude));
 
-            }
+  				}
+  				var flightPath=new google.maps.Polyline({   
+            path:myTrip,
+            strokeColor:"#0000FF",
+            strokeOpacity:0.8,
+            strokeWeight:2
+          });
+          flightPath.setMap(map);
+        }
 
       })
 }	  
