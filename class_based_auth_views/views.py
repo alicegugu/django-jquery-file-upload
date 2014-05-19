@@ -248,15 +248,21 @@ class IndoorPositionView(View):
 		p = IndoorPosition()										#as cache_key/wifi_position are unicode object, it cannot be save so it need equate it to IndoorPosition to be saved 
 
 		try:
-			key = request.POST.get('key')
+			request_data = request.raw_post_data
+			pos = json.loads(request_data)
+
+
+			#key = pos['key']
+			key = request.META['HTTP_X_APIKEY']
+
 			if key == "set_indoor_position_key_2014":
-				cache_key = request.POST.get('tag_id')
+				cache_key = pos['tag_id']
 				p.tag_id = cache_key
 					
 				if cache_key is None:
 					raise Exception('user has no tag attached')
 				else:
-					wifi_position = request.POST.get('wifi_position')
+					wifi_position = pos['wifi_position']
 					p.indoorposition = wifi_position
 					p.save()
 					cache_time = 30
